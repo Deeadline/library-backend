@@ -1,5 +1,6 @@
 package com.yoko.libraryproject.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -17,6 +18,7 @@ public class Category {
     private String name;
 
     @ManyToMany(mappedBy = "categories", fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("categories")
     private Set<Book> books = new HashSet<>();
 
     public Category() {

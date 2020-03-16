@@ -41,7 +41,7 @@ public class Book {
 
     private boolean deleted;
 
-    @ManyToMany(targetEntity = Category.class, fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @ManyToMany(targetEntity = Category.class, fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
     @JoinTable(
             name = "book_category",
             joinColumns = @JoinColumn(name = "book_id"),

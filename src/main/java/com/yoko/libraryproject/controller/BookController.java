@@ -1,5 +1,6 @@
 package com.yoko.libraryproject.controller;
 
+import com.yoko.libraryproject.dto.BookDto;
 import com.yoko.libraryproject.entity.Book;
 import com.yoko.libraryproject.service.BookService;
 import com.yoko.libraryproject.specification.BookCategoryFilterSpecification;
@@ -9,7 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(value = "/books", produces = "application/json")
+@RequestMapping(value = "/books", produces = "application/json", consumes = "application/json")
 public class BookController {
 
     private final BookService bookService;
@@ -20,7 +21,7 @@ public class BookController {
 
     @GetMapping()
     @ResponseBody
-    public Iterable<Book> findAll(
+    public Iterable<BookDto> findAll(
             BookDateFilterSpecification dateSpecification,
             BookNameFilterSpecification nameSpecification,
             BookCategoryFilterSpecification bookSpecification) {
@@ -29,17 +30,17 @@ public class BookController {
 
 
     @GetMapping({"/{id}"})
-    public Book getById(@PathVariable Long id) {
+    public BookDto getById(@PathVariable Long id) {
         return bookService.findById(id);
     }
 
     @PostMapping
-    public Book create(@RequestBody Book book) {
+    public BookDto create(@RequestBody Book book) {
         return bookService.create(book);
     }
 
     @PutMapping({"/{id}"})
-    public Book update(@PathVariable Long id, @RequestBody Book book) {
+    public BookDto update(@PathVariable Long id, @RequestBody BookDto book) {
         return bookService.update(id, book);
     }
 
