@@ -1,20 +1,21 @@
 package com.yoko.libraryproject.controller;
 
 import com.yoko.libraryproject.entity.Book;
-import com.yoko.libraryproject.repository.BookRepository;
+import com.yoko.libraryproject.service.BookService;
 import com.yoko.libraryproject.specification.BookCategoryFilterSpecification;
 import com.yoko.libraryproject.specification.BookDateFilterSpecification;
 import com.yoko.libraryproject.specification.BookNameFilterSpecification;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(value = "/books", produces = "application/json")
 public class BookController {
 
-    private final BookRepository bookRepository;
+    private final BookService bookService;
 
-    public BookController(BookRepository bookRepository) {
-        this.bookRepository = bookRepository;
+    public BookController(BookService bookService) {
+        this.bookService = bookService;
     }
 
     @GetMapping()
@@ -23,27 +24,28 @@ public class BookController {
             BookDateFilterSpecification dateSpecification,
             BookNameFilterSpecification nameSpecification,
             BookCategoryFilterSpecification bookSpecification) {
-        return bookRepository.findAll(bookSpecification.or(nameSpecification.or(dateSpecification)));
+        return bookService.findAll(bookSpecification.or(nameSpecification.or(dateSpecification)));
     }
 
 
     @GetMapping({"/{id}"})
-    public Long getById(@PathVariable Long id) {
-        return id;
+    public Book getById(@PathVariable Long id) {
+        return bookService.findById(id);
     }
 
     @PostMapping
-    public String create(@RequestBody Book book) {
-        return "Create";
+    public Book create(@RequestBody Book book) {
+        return bookService.create(book);
     }
 
     @PutMapping({"/{id}"})
-    public String update(@PathVariable Long id, @RequestBody Book book) {
-        return "Update";
+    public Book update(@PathVariable Long id, @RequestBody Book book) {
+        return bookService.update(id, book);
     }
 
     @DeleteMapping({"/{id}"})
-    public String delete(@PathVariable Long id) {
-        return "Delete";
+    public HttpStatus delete(@PathVariable Long id) {
+        bookService.delete(id);
+        return HttpStatus.NO_CONTENT;
     }
 }

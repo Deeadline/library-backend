@@ -1,16 +1,19 @@
 package com.yoko.libraryproject.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.NonNull;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
 @Entity
 public class Book {
+
+    public Book() {
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,17 +35,17 @@ public class Book {
     @NonNull
     private String publishingHouse;
 
-    @Column(nullable = false)
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @Column(nullable = false, length = 4)
     @NonNull
-    private Date releaseDate;
+    private String releaseDate;
 
     private boolean deleted;
 
-    @ManyToMany(targetEntity = Category.class, fetch = FetchType.LAZY)
+    @ManyToMany(targetEntity = Category.class, fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinTable(
             name = "book_category",
             joinColumns = @JoinColumn(name = "book_id"),
             inverseJoinColumns = @JoinColumn(name = "category_id"))
-    private Set<Category> categories;
+    @JsonIgnoreProperties("books")
+    private Set<Category> categories = new HashSet<>();
 }

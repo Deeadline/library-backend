@@ -3,6 +3,7 @@ package com.yoko.libraryproject.entity;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -15,6 +16,9 @@ public class Category {
 
     private String name;
 
-    @ManyToMany(mappedBy = "categories")
-    private Set<Book> books;
+    @ManyToMany(mappedBy = "categories", fetch = FetchType.LAZY)
+    private Set<Book> books = new HashSet<>();
+
+    public Category() {
+    }
 }
