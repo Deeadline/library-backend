@@ -1,19 +1,18 @@
 package com.yoko.libraryproject.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.Data;
-import lombok.NonNull;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
-@Data
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Book {
-
-    public Book() {
-    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

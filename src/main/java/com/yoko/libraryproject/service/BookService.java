@@ -2,9 +2,11 @@ package com.yoko.libraryproject.service;
 
 import com.yoko.libraryproject.dto.BookDto;
 import com.yoko.libraryproject.entity.Book;
+import com.yoko.libraryproject.entity.Category;
 import com.yoko.libraryproject.exception.BookNotFoundException;
 import com.yoko.libraryproject.repository.BookRepository;
 import com.yoko.libraryproject.repository.CategoryRepository;
+import org.jetbrains.annotations.NotNull;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -17,15 +19,18 @@ public class BookService {
 
     final BookRepository bookRepository;
     final CategoryRepository categoryRepository;
-
     final ModelMapper modelMapper;
 
-    public BookService(BookRepository bookRepository, ModelMapper modelMapper, CategoryRepository categoryRepository) {
+
+    public BookService(
+            BookRepository bookRepository,
+            ModelMapper modelMapper,
+            CategoryRepository categoryRepository
+    ) {
         this.bookRepository = bookRepository;
         this.categoryRepository = categoryRepository;
         this.modelMapper = modelMapper;
     }
-
 
     public Iterable<BookDto> findAll(Specification<Book> specification) {
         Collection<Book> books = bookRepository.findAll(specification);
@@ -55,7 +60,9 @@ public class BookService {
         bookRepository.deleteById(id);
     }
 
-    private BookDto convertToBookDto(Book book) {
-        return modelMapper.map(book, BookDto.class);
+    private BookDto convertToBookDto(@NotNull Book book) {
+        var bookDto = modelMapper.map(book, BookDto.class);
+        bookDto.setCategoryIds(book.getCategories().stream().map(Category::getId).collect(Collectors.toSet()));
+        return bookDto;
     }
 }
