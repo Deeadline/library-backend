@@ -1,14 +1,14 @@
 package com.yoko.libraryproject.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
 @Entity
 @Getter
@@ -22,8 +22,4 @@ public class Category {
     private long id;
 
     private String name;
-
-    @ManyToMany(mappedBy = "categories", fetch = FetchType.LAZY)
-    @JsonIgnoreProperties("categories")
-    private Set<Book> books = new HashSet<>();
 }
