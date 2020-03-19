@@ -27,22 +27,26 @@ public class JwtUtils {
     public String generateJwtToken(Authentication authentication) {
 
         UserDetailsImplementation userPrincipal = (UserDetailsImplementation) authentication.getPrincipal();
-        Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+        Key key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
         return Jwts.builder()
                 .setSubject((userPrincipal.getUsername()))
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
-                .signWith(key)
+                .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
 
     public String getUserNameFromJwtToken(String token) {
-        return Jwts.parserBuilder().setSigningKey(jwtSecret).build().parseClaimsJws(token).getBody().getSubject();
+        return Jwts.parserBuilder()
+                .setSigningKey(jwtSecret.getBytes())
+                .build().parseClaimsJws(token).getBody().getSubject();
     }
 
     public boolean validateJwtToken(String authToken) {
         try {
-            Jwts.parserBuilder().setSigningKey(jwtSecret).build().parseClaimsJws(authToken);
+            Jwts.parserBuilder()
+                    .setSigningKey(jwtSecret.getBytes())
+                    .build().parseClaimsJws(authToken);
             return true;
         } catch (SignatureException e) {
             logger.error("Invalid JWT signature: {}", e.getMessage());

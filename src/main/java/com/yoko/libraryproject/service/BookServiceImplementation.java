@@ -5,7 +5,6 @@ import com.yoko.libraryproject.entity.Book;
 import com.yoko.libraryproject.entity.Category;
 import com.yoko.libraryproject.exception.BookNotFoundException;
 import com.yoko.libraryproject.repository.BookRepository;
-import com.yoko.libraryproject.repository.CategoryRepository;
 import org.jetbrains.annotations.NotNull;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.jpa.domain.Specification;
@@ -18,17 +17,14 @@ import java.util.stream.Collectors;
 public class BookServiceImplementation implements BookService {
 
     final BookRepository bookRepository;
-    final CategoryRepository categoryRepository;
     final ModelMapper modelMapper;
 
 
     public BookServiceImplementation(
             BookRepository bookRepository,
-            ModelMapper modelMapper,
-            CategoryRepository categoryRepository
+            ModelMapper modelMapper
     ) {
         this.bookRepository = bookRepository;
-        this.categoryRepository = categoryRepository;
         this.modelMapper = modelMapper;
     }
 

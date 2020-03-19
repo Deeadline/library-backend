@@ -11,7 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(value = "/books", produces = "application/json", consumes = "application/json")
+@RequestMapping(value = "/api/books", produces = "application/json", consumes = "application/json")
 @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
 public class BookController {
 
