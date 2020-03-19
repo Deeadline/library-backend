@@ -41,6 +41,7 @@ public class Book {
     @NonNull
     private String releaseDate;
 
+    private boolean isLoaned;
     private boolean deleted;
 
     @ManyToMany(targetEntity = Category.class, fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
@@ -50,4 +51,7 @@ public class Book {
             inverseJoinColumns = @JoinColumn(name = "category_id"))
     @JsonIgnoreProperties("books")
     private Set<Category> categories = new HashSet<>();
+
+    @OneToMany(mappedBy = "book")
+    private Set<UserBook> userBooks = new HashSet<>();
 }

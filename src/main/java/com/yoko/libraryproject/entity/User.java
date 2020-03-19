@@ -23,15 +23,15 @@ public class User {
     private long id;
 
     @NonNull
-    @Column(length = 50)
+    @Column(length = 50, nullable = false)
     private String email;
 
     @NonNull
-    @Column(length = 20)
+    @Column(length = 20, nullable = false)
     private String username;
 
     @NonNull
-    @Column(length = 100)
+    @Column(length = 100, nullable = false)
     private String password;
 
     @ManyToMany(fetch = FetchType.LAZY)
@@ -40,4 +40,7 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
+
+    @OneToMany(mappedBy = "user")
+    private Set<UserBook> userBooks = new HashSet<>();
 }
