@@ -1,8 +1,8 @@
 package com.yoko.libraryproject.security;
 
-import com.yoko.libraryproject.filter.AuthTokenFilter;
+import com.yoko.libraryproject.security.filter.AuthTokenFilter;
 import com.yoko.libraryproject.security.jwt.AuthEntryPointJwt;
-import com.yoko.libraryproject.service.UserDetailsServiceImplementation;
+import com.yoko.libraryproject.security.service.UserDetailsServiceImplementation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

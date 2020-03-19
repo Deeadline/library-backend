@@ -1,6 +1,6 @@
-package com.yoko.libraryproject.utils;
+package com.yoko.libraryproject.security.jwt;
 
-import com.yoko.libraryproject.service.UserDetailsImplementation;
+import com.yoko.libraryproject.security.service.UserDetailsImplementation;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;

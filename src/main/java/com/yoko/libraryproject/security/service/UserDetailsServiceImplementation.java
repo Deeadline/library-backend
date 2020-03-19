@@ -1,4 +1,4 @@
-package com.yoko.libraryproject.service;
+package com.yoko.libraryproject.security.service;
 
 import com.yoko.libraryproject.entity.User;
 import com.yoko.libraryproject.repository.UserRepository;

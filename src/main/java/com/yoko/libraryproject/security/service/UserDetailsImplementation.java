@@ -1,4 +1,4 @@
-package com.yoko.libraryproject.service;
+package com.yoko.libraryproject.security.service;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.yoko.libraryproject.entity.User;

@@ -1,7 +1,7 @@
-package com.yoko.libraryproject.filter;
+package com.yoko.libraryproject.security.filter;
 
-import com.yoko.libraryproject.service.UserDetailsServiceImplementation;
-import com.yoko.libraryproject.utils.JwtUtils;
+import com.yoko.libraryproject.security.service.UserDetailsServiceImplementation;
+import com.yoko.libraryproject.security.jwt.JwtUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
