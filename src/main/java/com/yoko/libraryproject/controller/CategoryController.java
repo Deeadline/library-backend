@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/categories", produces = "application/json")
-@PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+@PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMINISTRATOR')")
 public class CategoryController {
 
     final CategoryService categoryService;

@@ -2,6 +2,8 @@ package com.yoko.libraryproject.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
+import org.hibernate.annotations.ResultCheckStyle;
+import org.hibernate.annotations.SQLDelete;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -12,6 +14,7 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@SQLDelete(sql = "UPDATE book SET deleted = true WHERE id = ?", check = ResultCheckStyle.COUNT)
 public class Book {
 
     @Id

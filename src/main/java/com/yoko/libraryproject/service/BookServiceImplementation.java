@@ -5,25 +5,29 @@ import com.yoko.libraryproject.entity.Book;
 import com.yoko.libraryproject.entity.Category;
 import com.yoko.libraryproject.exception.BookNotFoundException;
 import com.yoko.libraryproject.repository.BookRepository;
+import com.yoko.libraryproject.repository.CategoryRepository;
 import org.jetbrains.annotations.NotNull;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.stream.Collectors;
 
 @Service
 public class BookServiceImplementation implements BookService {
 
+    final CategoryRepository categoryRepository;
     final BookRepository bookRepository;
     final ModelMapper modelMapper;
 
 
     public BookServiceImplementation(
-            BookRepository bookRepository,
+            CategoryRepository categoryRepository, BookRepository bookRepository,
             ModelMapper modelMapper
     ) {
+        this.categoryRepository = categoryRepository;
         this.bookRepository = bookRepository;
         this.modelMapper = modelMapper;
     }
@@ -37,8 +41,8 @@ public class BookServiceImplementation implements BookService {
         return bookRepository.findById(id).map(this::convertToBookDto).orElseThrow(() -> new BookNotFoundException(id));
     }
 
-    public BookDto create(Book book) {
-        return convertToBookDto(bookRepository.save(book));
+    public BookDto create(BookDto book) {
+        return convertToBookDto(bookRepository.save(convertToBook(book)));
     }
 
     public BookDto update(Long id, BookDto bookDto) {
@@ -60,5 +64,12 @@ public class BookServiceImplementation implements BookService {
         var bookDto = modelMapper.map(book, BookDto.class);
         bookDto.setCategoryIds(book.getCategories().stream().map(Category::getId).collect(Collectors.toSet()));
         return bookDto;
+    }
+
+    private Book convertToBook(@NotNull BookDto bookDto) {
+        var book = modelMapper.map(bookDto, Book.class);
+        var categories = new HashSet<>(categoryRepository.findAllById(bookDto.getCategoryIds()));
+        book.setCategories(categories);
+        return book;
     }
 }

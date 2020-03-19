@@ -1,18 +1,17 @@
 package com.yoko.libraryproject.controller;
 
 import com.yoko.libraryproject.dto.BookDto;
-import com.yoko.libraryproject.entity.Book;
 import com.yoko.libraryproject.service.BookService;
 import com.yoko.libraryproject.specification.BookCategoryFilterSpecification;
 import com.yoko.libraryproject.specification.BookDateFilterSpecification;
 import com.yoko.libraryproject.specification.BookNameFilterSpecification;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(value = "/api/books", produces = "application/json", consumes = "application/json")
-@PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+@PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMINISTRATOR')")
 public class BookController {
 
     private final BookService bookService;
@@ -37,21 +36,21 @@ public class BookController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
-    public BookDto create(@RequestBody Book book) {
+    @PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
+    public BookDto create(@RequestBody BookDto book) {
         return bookService.create(book);
     }
 
     @PutMapping({"/{id}"})
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
     public BookDto update(@PathVariable Long id, @RequestBody BookDto book) {
         return bookService.update(id, book);
     }
 
     @DeleteMapping({"/{id}"})
-    @PreAuthorize("hasRole('ADMIN')")
-    public HttpStatus delete(@PathVariable Long id) {
+    @PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
+    public ResponseEntity<?> delete(@PathVariable Long id) {
         bookService.delete(id);
-        return HttpStatus.NO_CONTENT;
+        return ResponseEntity.noContent().build();
     }
 }

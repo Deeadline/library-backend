@@ -9,7 +9,7 @@ public interface BookService {
 
     BookDto findById(Long id);
 
-    BookDto create(Book book);
+    BookDto create(BookDto book);
 
     BookDto update(Long id, BookDto bookDto);
 
