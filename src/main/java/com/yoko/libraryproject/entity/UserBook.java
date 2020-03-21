@@ -25,4 +25,6 @@ public class UserBook {
     private Book book;
 
     private boolean loanedByUser;
+
+    private String comment;
 }
