@@ -24,7 +24,6 @@ public class CategoryServiceImplementation implements CategoryService {
     @Override
     public List<CategoryDto> findAll() {
         List<Category> categories = categoryRepository.findAll();
-
         return categories.stream().map(this::convertToCategoryDto).collect(Collectors.toList());
     }
 

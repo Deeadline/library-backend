@@ -10,6 +10,7 @@ import com.yoko.libraryproject.entity.User;
 import com.yoko.libraryproject.entity.UserBook;
 import com.yoko.libraryproject.exception.BookNotFoundException;
 import com.yoko.libraryproject.exception.UserBookNotFoundException;
+import com.yoko.libraryproject.exception.UserBookNotLoanedException;
 import com.yoko.libraryproject.repository.BookRepository;
 import com.yoko.libraryproject.repository.UserBookRepository;
 import com.yoko.libraryproject.repository.UserRepository;
@@ -42,7 +43,7 @@ public class LibraryServiceImplementation implements LibraryService {
         this.modelMapper = modelMapper;
     }
 
-    public boolean comment(long bookId, CommentBookDto request) {
+    public BookDto comment(long bookId, CommentBookDto request) {
         UserDetailsImplementation userDetails = (UserDetailsImplementation) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userRepository.getOne(userDetails.getId());
         Book book = bookRepository.findById(bookId).orElseThrow(() -> new BookNotFoundException(bookId));
@@ -54,34 +55,34 @@ public class LibraryServiceImplementation implements LibraryService {
         }
         userBook.setComment(request.getComment());
         userBookRepository.save(userBook);
-        bookRepository.save(book);
-        return true;
+        return convertToBookDto(bookRepository.save(book));
     }
 
-    public boolean returnBook(long bookId) {
+    public BookDto returnBook(long bookId) {
         UserDetailsImplementation userDetails = (UserDetailsImplementation) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userRepository.getOne(userDetails.getId());
         Book book = bookRepository.findById(bookId).orElseThrow(() -> new BookNotFoundException(bookId));
         UserBook userBook = userBookRepository.findByUserAndBook(user, book).orElseThrow(() -> new UserBookNotFoundException(user.getId(), book.getId()));
         if (userBook.isLoanedByUser()) {
             book.setLoaned(false);
-            bookRepository.save(book);
+            return convertToBookDto(bookRepository.save(book));
         }
-        return true;
+        throw new UserBookNotLoanedException(book.getId());
     }
 
-    public String reserveBook(ReserveDto reserveRequest) {
+    public BookDto reserveBook(ReserveDto reserveRequest) {
         UserDetailsImplementation userDetails = (UserDetailsImplementation) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userRepository.getOne(userDetails.getId());
         Book book = bookRepository.findById(reserveRequest.getBookId()).orElseThrow(() -> new BookNotFoundException(reserveRequest.getBookId()));
         book.setLoaned(true);
-        UserBook userBook = new UserBook();
-        userBook.setBook(book);
-        userBook.setUser(user);
+        UserBook userBook = userBookRepository.findByUserAndBook(user, book).orElse(new UserBook());
+        if (userBook.getId() == 0) {
+            userBook.setBook(book);
+            userBook.setUser(user);
+        }
         userBook.setLoanedByUser(true);
         userBookRepository.save(userBook);
-        bookRepository.save(book);
-        return "ok";
+        return convertToBookDto(bookRepository.save(book));
     }
 
     public List<BookDto> findAll() {

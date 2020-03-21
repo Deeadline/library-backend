@@ -8,11 +8,11 @@ import com.yoko.libraryproject.dto.ReserveDto;
 import java.util.List;
 
 public interface LibraryService {
-    boolean comment(long bookId, CommentBookDto request);
+    BookDto comment(long bookId, CommentBookDto request);
 
-    boolean returnBook(long bookId);
+    BookDto returnBook(long bookId);
 
-    String reserveBook(ReserveDto reserveRequest);
+    BookDto reserveBook(ReserveDto reserveRequest);
 
     List<BookDto> findAll();
 

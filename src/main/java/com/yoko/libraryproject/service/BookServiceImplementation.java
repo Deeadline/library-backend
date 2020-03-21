@@ -22,7 +22,6 @@ public class BookServiceImplementation implements BookService {
     final BookRepository bookRepository;
     final ModelMapper modelMapper;
 
-
     public BookServiceImplementation(
             CategoryRepository categoryRepository, BookRepository bookRepository,
             ModelMapper modelMapper

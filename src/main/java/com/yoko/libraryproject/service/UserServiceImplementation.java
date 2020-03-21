@@ -7,11 +7,13 @@ import com.yoko.libraryproject.dto.RegisterDto;
 import com.yoko.libraryproject.entity.Role;
 import com.yoko.libraryproject.entity.RoleEnum;
 import com.yoko.libraryproject.entity.User;
+import com.yoko.libraryproject.exception.EmailAlreadyExistException;
+import com.yoko.libraryproject.exception.RoleNotFoundException;
+import com.yoko.libraryproject.exception.UserAlreadyExistException;
 import com.yoko.libraryproject.repository.RoleRepository;
 import com.yoko.libraryproject.repository.UserRepository;
 import com.yoko.libraryproject.security.jwt.JwtUtils;
 import com.yoko.libraryproject.security.service.UserDetailsImplementation;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -29,20 +31,25 @@ import java.util.stream.Collectors;
 @Service
 public class UserServiceImplementation implements UserService {
 
-    @Autowired
-    AuthenticationManager authenticationManager;
+    final AuthenticationManager authenticationManager;
+    final UserRepository userRepository;
+    final RoleRepository roleRepository;
+    final PasswordEncoder encoder;
+    final JwtUtils jwtUtils;
 
-    @Autowired
-    UserRepository userRepository;
-
-    @Autowired
-    RoleRepository roleRepository;
-
-    @Autowired
-    PasswordEncoder encoder;
-
-    @Autowired
-    JwtUtils jwtUtils;
+    public UserServiceImplementation(
+            AuthenticationManager authenticationManager,
+            UserRepository userRepository,
+            RoleRepository roleRepository,
+            PasswordEncoder encoder,
+            JwtUtils jwtUtils
+    ) {
+        this.authenticationManager = authenticationManager;
+        this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
+        this.encoder = encoder;
+        this.jwtUtils = jwtUtils;
+    }
 
     public JwtResponse login(LoginDto loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
@@ -65,31 +72,34 @@ public class UserServiceImplementation implements UserService {
 
     public ResponseEntity<?> register(RegisterDto registerRequest) {
         if (userRepository.existsByUsername(registerRequest.getUsername())) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(new MessageResponse("Error: Username is already taken!"));
+            throw new UserAlreadyExistException(registerRequest.getUsername());
         }
 
         if (userRepository.existsByEmail(registerRequest.getEmail())) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(new MessageResponse("Error: Email is already in use!"));
+            throw new EmailAlreadyExistException(registerRequest.getUsername());
         }
 
-        User user = new User();
-        user.setUsername(registerRequest.getUsername());
-        user.setEmail(registerRequest.getEmail());
-        user.setPassword(encoder.encode(registerRequest.getPassword()));
+        User user = createUser(registerRequest);
+        user.setRoles(setRoles());
+        userRepository.save(user);
 
+        return ResponseEntity
+                .ok(new MessageResponse("User registered successfully!"));
+    }
+
+    private Set<Role> setRoles() {
         Set<Role> roles = new HashSet<>();
         Role userRole = roleRepository.findByName(RoleEnum.ROLE_USER)
-                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                .orElseThrow(RoleNotFoundException::new);
         roles.add(userRole);
+        return roles;
+    }
 
-        user.setRoles(roles);
-        userRepository.save(user);
-        return ResponseEntity
-                .ok()
-                .body(new MessageResponse("User registered successfully!"));
+    private User createUser(RegisterDto request) {
+        User user = new User();
+        user.setUsername(request.getUsername());
+        user.setEmail(request.getEmail());
+        user.setPassword(encoder.encode(request.getPassword()));
+        return user;
     }
 }
