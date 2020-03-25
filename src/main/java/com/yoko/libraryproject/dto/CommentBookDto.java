@@ -7,5 +7,8 @@ import lombok.NonNull;
 public class CommentBookDto {
 
     @NonNull
+    private long bookId;
+
+    @NonNull
     private String comment;
 }

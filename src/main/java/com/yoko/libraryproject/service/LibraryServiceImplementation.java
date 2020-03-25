@@ -3,7 +3,6 @@ package com.yoko.libraryproject.service;
 import com.yoko.libraryproject.dto.AvailableResponse;
 import com.yoko.libraryproject.dto.BookDto;
 import com.yoko.libraryproject.dto.CommentBookDto;
-import com.yoko.libraryproject.dto.ReserveDto;
 import com.yoko.libraryproject.entity.Book;
 import com.yoko.libraryproject.entity.Category;
 import com.yoko.libraryproject.entity.User;
@@ -43,10 +42,10 @@ public class LibraryServiceImplementation implements LibraryService {
         this.modelMapper = modelMapper;
     }
 
-    public BookDto comment(long bookId, CommentBookDto request) {
+    public BookDto comment(CommentBookDto request) {
         UserDetailsImplementation userDetails = (UserDetailsImplementation) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userRepository.getOne(userDetails.getId());
-        Book book = bookRepository.findById(bookId).orElseThrow(() -> new BookNotFoundException(bookId));
+        Book book = bookRepository.findById(request.getBookId()).orElseThrow(() -> new BookNotFoundException(request.getBookId()));
         UserBook userBook = userBookRepository.findByUserAndBook(user, book).orElse(new UserBook());
         if (userBook.getId() == 0) {
             userBook.setBook(book);
@@ -70,10 +69,10 @@ public class LibraryServiceImplementation implements LibraryService {
         throw new UserBookNotLoanedException(book.getId());
     }
 
-    public BookDto reserveBook(ReserveDto reserveRequest) {
+    public BookDto reserveBook(long bookId) {
         UserDetailsImplementation userDetails = (UserDetailsImplementation) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userRepository.getOne(userDetails.getId());
-        Book book = bookRepository.findById(reserveRequest.getBookId()).orElseThrow(() -> new BookNotFoundException(reserveRequest.getBookId()));
+        Book book = bookRepository.findById(bookId).orElseThrow(() -> new BookNotFoundException(bookId));
         book.setLoaned(true);
         UserBook userBook = userBookRepository.findByUserAndBook(user, book).orElse(new UserBook());
         if (userBook.getId() == 0) {

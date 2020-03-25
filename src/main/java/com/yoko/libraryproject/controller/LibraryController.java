@@ -30,19 +30,16 @@ public class LibraryController {
 
     @PostMapping("/reserve")
     public ResponseEntity<?> reserveBook(@RequestBody ReserveDto reserveRequest) {
-        service.reserveBook(reserveRequest);
-        return ResponseEntity.ok(reserveRequest);
+        return ResponseEntity.ok(service.reserveBook(reserveRequest.getBookId()));
     }
 
-    @DeleteMapping("/returnBook/{bookId}")
-    public ResponseEntity<?> returnBook(@PathVariable long bookId) {
-        service.returnBook(bookId);
-        return ResponseEntity.ok(bookId);
+    @PutMapping("/returnBook")
+    public ResponseEntity<?> returnBook(@RequestBody ReserveDto returnRequest) {
+        return ResponseEntity.ok(service.returnBook(returnRequest.getBookId()));
     }
 
-    @PutMapping("/commentBook/{bookId}")
-    public ResponseEntity<?> commentBook(@PathVariable long bookId, @RequestBody CommentBookDto request) {
-        service.comment(bookId, request);
-        return ResponseEntity.ok(bookId);
+    @PutMapping("/commentBook")
+    public ResponseEntity<?> commentBook(@RequestBody CommentBookDto request) {
+        return ResponseEntity.ok(service.comment(request));
     }
 }
