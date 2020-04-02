@@ -29,14 +29,14 @@ public class JwtUtils {
         UserDetailsImplementation userPrincipal = (UserDetailsImplementation) authentication.getPrincipal();
         Key key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
         return Jwts.builder()
-                .setSubject((userPrincipal.getUsername()))
+                .setSubject((userPrincipal.getEmail()))
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    public String getUserNameFromJwtToken(String token) {
+    public String getUserEmailFromJwtToken(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(jwtSecret.getBytes())
                 .build().parseClaimsJws(token).getBody().getSubject();

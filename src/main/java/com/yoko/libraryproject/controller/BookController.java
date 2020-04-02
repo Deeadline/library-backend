@@ -1,10 +1,13 @@
 package com.yoko.libraryproject.controller;
 
 import com.yoko.libraryproject.dto.BookDto;
+import com.yoko.libraryproject.entity.Book;
 import com.yoko.libraryproject.service.BookService;
 import com.yoko.libraryproject.specification.BookCategoryFilterSpecification;
 import com.yoko.libraryproject.specification.BookDateFilterSpecification;
 import com.yoko.libraryproject.specification.BookNameFilterSpecification;
+import com.yoko.libraryproject.specification.NotDeletedBookSpecification;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -23,10 +26,12 @@ public class BookController {
     @GetMapping()
     @ResponseBody
     public Iterable<BookDto> findAll(
+            NotDeletedBookSpecification notDeletedBookSpecification,
             BookDateFilterSpecification dateSpecification,
             BookNameFilterSpecification nameSpecification,
             BookCategoryFilterSpecification bookSpecification) {
-        return bookService.findAll(bookSpecification.or(nameSpecification.or(dateSpecification)));
+        Specification<Book> specification = Specification.where(notDeletedBookSpecification).and(nameSpecification.or(dateSpecification).or(bookSpecification));
+        return bookService.findAll(specification);
     }
 
 
