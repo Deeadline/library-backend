@@ -4,7 +4,6 @@ import com.yoko.libraryproject.dto.AvailableResponse;
 import com.yoko.libraryproject.dto.BookDto;
 import com.yoko.libraryproject.dto.CommentBookDto;
 import com.yoko.libraryproject.entity.Book;
-import com.yoko.libraryproject.entity.Category;
 import com.yoko.libraryproject.entity.User;
 import com.yoko.libraryproject.entity.UserBook;
 import com.yoko.libraryproject.exception.BookNotFoundException;
@@ -14,13 +13,12 @@ import com.yoko.libraryproject.repository.BookRepository;
 import com.yoko.libraryproject.repository.UserBookRepository;
 import com.yoko.libraryproject.repository.UserRepository;
 import com.yoko.libraryproject.security.service.UserDetailsImplementation;
-import org.jetbrains.annotations.NotNull;
-import org.modelmapper.ModelMapper;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class LibraryServiceImplementation implements LibraryService {
@@ -28,18 +26,17 @@ public class LibraryServiceImplementation implements LibraryService {
     private final UserRepository userRepository;
     private final UserBookRepository userBookRepository;
     private final BookRepository bookRepository;
-    private final ModelMapper modelMapper;
+    private final Mapper mapper;
 
     public LibraryServiceImplementation(
             UserRepository userRepository,
             UserBookRepository userBookRepository,
             BookRepository bookRepository,
-            ModelMapper modelMapper
-    ) {
+            Mapper mapper) {
         this.userRepository = userRepository;
         this.userBookRepository = userBookRepository;
         this.bookRepository = bookRepository;
-        this.modelMapper = modelMapper;
+        this.mapper = mapper;
     }
 
     public BookDto comment(CommentBookDto request) {
@@ -54,7 +51,7 @@ public class LibraryServiceImplementation implements LibraryService {
         }
         userBook.setComment(request.getComment());
         userBookRepository.save(userBook);
-        return convertToBookDto(bookRepository.save(book));
+        return mapper.convertToBookDto(bookRepository.save(book));
     }
 
     public BookDto returnBook(long bookId) {
@@ -64,7 +61,7 @@ public class LibraryServiceImplementation implements LibraryService {
         UserBook userBook = userBookRepository.findByUserAndBook(user, book).orElseThrow(() -> new UserBookNotFoundException(user.getId(), book.getId()));
         if (userBook.isLoanedByUser()) {
             book.setLoaned(false);
-            return convertToBookDto(bookRepository.save(book));
+            return mapper.convertToBookDto(bookRepository.save(book));
         }
         throw new UserBookNotLoanedException(book.getId());
     }
@@ -81,23 +78,18 @@ public class LibraryServiceImplementation implements LibraryService {
         }
         userBook.setLoanedByUser(true);
         userBookRepository.save(userBook);
-        return convertToBookDto(bookRepository.save(book));
+        return mapper.convertToBookDto(bookRepository.save(book));
     }
 
     public List<BookDto> findAll() {
         UserDetailsImplementation userDetails = (UserDetailsImplementation) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userRepository.getOne(userDetails.getId());
         List<UserBook> userBooks = userBookRepository.findAllByUserAndLoanedByUser(user, true);
-        return userBooks.stream().map(UserBook::getBook).map(this::convertToBookDto).collect(Collectors.toList());
+        Stream<Book> books = userBooks.stream().map(UserBook::getBook);
+        return books.map(mapper::convertToBookDto).collect(Collectors.toList());
     }
 
     public AvailableResponse checkAvailability(long bookId) {
         return bookRepository.findById(bookId).map(b -> new AvailableResponse(b.isLoaned())).orElseThrow(() -> new BookNotFoundException(bookId));
-    }
-
-    private BookDto convertToBookDto(@NotNull Book book) {
-        var bookDto = modelMapper.map(book, BookDto.class);
-        bookDto.setCategoryIds(book.getCategories().stream().map(Category::getId).collect(Collectors.toSet()));
-        return bookDto;
     }
 }

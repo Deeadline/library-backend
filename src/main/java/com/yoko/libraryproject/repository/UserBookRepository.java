@@ -12,4 +12,6 @@ public interface UserBookRepository extends JpaRepository<UserBook, Long> {
     List<UserBook> findAllByUserAndLoanedByUser(User user, boolean isLoaned);
 
     Optional<UserBook> findByUserAndBook(User user, Book book);
+
+    List<UserBook> findAllByBook(Book book);
 }

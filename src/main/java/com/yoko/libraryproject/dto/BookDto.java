@@ -2,7 +2,9 @@ package com.yoko.libraryproject.dto;
 
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -14,4 +16,5 @@ public class BookDto {
     private String publishingHouse;
     private String releaseDate;
     private Set<Long> categoryIds = new HashSet<>();
+    private List<CommentBookDto> comments = new ArrayList<>();
 }
