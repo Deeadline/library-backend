@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -28,8 +29,12 @@ public class JwtUtils {
 
         UserDetailsImplementation userPrincipal = (UserDetailsImplementation) authentication.getPrincipal();
         Key key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
+        String role = (String) userPrincipal.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority).toArray()[0];
+        Claims claims = Jwts.claims().setSubject(userPrincipal.getEmail());
+        claims.put("role", role);
         return Jwts.builder()
-                .setSubject((userPrincipal.getEmail()))
+                .setClaims(claims)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
                 .signWith(key, SignatureAlgorithm.HS256)
@@ -37,9 +42,10 @@ public class JwtUtils {
     }
 
     public String getUserEmailFromJwtToken(String token) {
-        return Jwts.parserBuilder()
+        Claims body = Jwts.parserBuilder()
                 .setSigningKey(jwtSecret.getBytes())
-                .build().parseClaimsJws(token).getBody().getSubject();
+                .build().parseClaimsJws(token).getBody();
+        return body.getSubject();
     }
 
     public boolean validateJwtToken(String authToken) {
