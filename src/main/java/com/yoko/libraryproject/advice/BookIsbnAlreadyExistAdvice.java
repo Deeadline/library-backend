@@ -13,7 +13,7 @@ public class BookIsbnAlreadyExistAdvice {
     @ResponseBody
     @ExceptionHandler(BookIsbnAlreadyExistException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    String bookNotFoundHandler(BookIsbnAlreadyExistException ex) {
+    String bookIsbnNotFoundHandler(BookIsbnAlreadyExistException ex) {
         return ex.getMessage();
     }
 }

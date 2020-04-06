@@ -43,17 +43,21 @@ public class BookServiceImplementation implements BookService {
     }
 
     public BookDto create(@NotNull BookDto book) {
-        bookRepository.findByIsbn(book.getIsbn()).orElseThrow(BookIsbnAlreadyExistException::new);
+        if (bookRepository.findByIsbn(book.getIsbn()).isPresent()) {
+            throw new BookIsbnAlreadyExistException();
+        }
         return mapper.convertToBookDto(bookRepository.save(mapper.convertToBook(book)));
     }
 
     public BookDto update(Long id, BookDto bookDto) {
+        var parsedBook = mapper.convertToBook(bookDto);
         return bookRepository.findById(id).map(b -> {
-            b.setAuthor(bookDto.getAuthor());
-            b.setIsbn(bookDto.getIsbn());
-            b.setPublishingHouse(bookDto.getPublishingHouse());
-            b.setTitle(bookDto.getTitle());
-            b.setReleaseDate(bookDto.getReleaseDate());
+            b.setAuthor(parsedBook.getAuthor());
+            b.setIsbn(parsedBook.getIsbn());
+            b.setPublishingHouse(parsedBook.getPublishingHouse());
+            b.setTitle(parsedBook.getTitle());
+            b.setReleaseDate(parsedBook.getReleaseDate());
+            b.setCategories(parsedBook.getCategories());
             return mapper.convertToBookDto(bookRepository.save(b));
         }).orElseThrow(() -> new BookNotFoundException(id));
     }
