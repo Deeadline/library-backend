@@ -1,6 +1,5 @@
 package com.yoko.libraryproject.service;
 
-import com.yoko.libraryproject.dto.AvailableResponse;
 import com.yoko.libraryproject.dto.BookDto;
 import com.yoko.libraryproject.dto.CommentBookDto;
 import com.yoko.libraryproject.entity.Book;
@@ -87,9 +86,5 @@ public class LibraryServiceImplementation implements LibraryService {
         List<UserBook> userBooks = userBookRepository.findAllByUserAndLoanedByUser(user, true);
         Stream<Book> books = userBooks.stream().map(UserBook::getBook);
         return books.map(mapper::convertToBookDto).collect(Collectors.toList());
-    }
-
-    public AvailableResponse checkAvailability(long bookId) {
-        return bookRepository.findById(bookId).map(b -> new AvailableResponse(b.isLoaned())).orElseThrow(() -> new BookNotFoundException(bookId));
     }
 }

@@ -15,6 +15,7 @@ public class BookDto {
     private String author;
     private String publishingHouse;
     private String releaseDate;
+    private Boolean isLoaned;
     private Set<Long> categoryIds = new HashSet<>();
     private List<CommentBookDto> comments = new ArrayList<>();
 }

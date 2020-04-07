@@ -33,6 +33,7 @@ public class JwtUtils {
                 .map(GrantedAuthority::getAuthority).toArray()[0];
         Claims claims = Jwts.claims().setSubject(userPrincipal.getEmail());
         claims.put("role", role);
+        claims.put("username", userPrincipal.getUsername());
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(new Date())

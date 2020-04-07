@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin(origins = "*",  maxAge = 3600)
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping(value = "/api/library", produces = "application/json", consumes = "application/json")
 @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMINISTRATOR')")
@@ -17,11 +17,6 @@ public class LibraryController {
 
     public LibraryController(LibraryService service) {
         this.service = service;
-    }
-
-    @GetMapping("/availability/{bookId}")
-    public ResponseEntity<?> checkAvailability(@PathVariable long bookId) {
-        return ResponseEntity.ok().body(service.checkAvailability(bookId));
     }
 
     @GetMapping("/myBooks")

@@ -1,6 +1,5 @@
 package com.yoko.libraryproject.service;
 
-import com.yoko.libraryproject.dto.AvailableResponse;
 import com.yoko.libraryproject.dto.BookDto;
 import com.yoko.libraryproject.dto.CommentBookDto;
 
@@ -14,6 +13,4 @@ public interface LibraryService {
     BookDto reserveBook(long bookId);
 
     List<BookDto> findAll();
-
-    AvailableResponse checkAvailability(long bookId);
 }
