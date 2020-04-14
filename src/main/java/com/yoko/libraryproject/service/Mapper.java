@@ -43,7 +43,7 @@ public class Mapper {
         UserDetailsImplementation userDetails = (UserDetailsImplementation) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userRepository.getOne(userDetails.getId());
         userBookRepository.findByUserAndBook(user, book)
-                .ifPresent(userBook -> bookDto.setIsLoaned(userBook.isLoanedByUser()));
+                .ifPresent(userBook -> bookDto.setLoaned(book.isLoaned()));
         bookDto.setComments(userBooks);
         return bookDto;
     }

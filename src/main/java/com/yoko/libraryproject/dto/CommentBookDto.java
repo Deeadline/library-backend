@@ -11,9 +11,8 @@ import lombok.NonNull;
 public class CommentBookDto {
 
     @NonNull
-    private long bookId;
+    private Long bookId;
 
-    @NonNull
     private String comment;
 
     private String username;

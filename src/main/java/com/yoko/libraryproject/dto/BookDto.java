@@ -9,13 +9,13 @@ import java.util.Set;
 
 @Data
 public class BookDto {
-    private long id;
+    private Long id;
     private String title;
     private String isbn;
     private String author;
     private String publishingHouse;
     private String releaseDate;
-    private Boolean isLoaned;
+    private boolean isLoaned;
     private Set<Long> categoryIds = new HashSet<>();
     private List<CommentBookDto> comments = new ArrayList<>();
 }

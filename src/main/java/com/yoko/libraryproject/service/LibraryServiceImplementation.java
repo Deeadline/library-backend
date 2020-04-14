@@ -47,6 +47,7 @@ public class LibraryServiceImplementation implements LibraryService {
             userBook.setBook(book);
             userBook.setUser(user);
             userBook.setLoanedByUser(false);
+            userBook.setReturnedByUser(false);
         }
         userBook.setComment(request.getComment());
         userBookRepository.save(userBook);
@@ -60,6 +61,8 @@ public class LibraryServiceImplementation implements LibraryService {
         UserBook userBook = userBookRepository.findByUserAndBook(user, book).orElseThrow(() -> new UserBookNotFoundException(user.getId(), book.getId()));
         if (userBook.isLoanedByUser()) {
             book.setLoaned(false);
+            userBook.setReturnedByUser(true);
+            userBookRepository.save(userBook);
             return mapper.convertToBookDto(bookRepository.save(book));
         }
         throw new UserBookNotLoanedException(book.getId());
@@ -76,6 +79,7 @@ public class LibraryServiceImplementation implements LibraryService {
             userBook.setUser(user);
         }
         userBook.setLoanedByUser(true);
+        userBook.setReturnedByUser(false);
         userBookRepository.save(userBook);
         return mapper.convertToBookDto(bookRepository.save(book));
     }
